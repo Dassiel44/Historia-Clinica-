@@ -1,0 +1,248 @@
+import java.util.*;
+
+
+class Patient {
+    private String name;
+    private int ci;
+    private String birthDate;
+    private boolean sex; 
+    private double weight;
+    private double height;
+    private String address;
+    private Photo[] photos;
+    private Diseases[] diseases;
+    private int photoCount;
+    private int diseaseCount;
+
+    public Patient(String name, int ci, String birthDate, boolean sex, double weight, double height, String address, int maxPhotos, int maxDiseases) {
+        this.name = name;
+        this.ci = ci;
+        this.birthDate = birthDate;
+        this.sex = sex;
+        this.weight = weight;
+        this.height = height;
+        this.address = address;
+        this.photos = new Photo[maxPhotos];
+        this.diseases = new Diseases[maxDiseases];
+        this.photoCount = 0;
+        this.diseaseCount = 0;
+    }
+
+ 
+    public String getName() {
+        return name;
+    }
+
+    public int getCI() {
+        return ci;
+    }
+
+    public String getBirthDate() {
+        return birthDate;
+    }
+
+    public boolean getSex() {
+        return sex;
+    }
+
+    public double getWeight() {
+        return weight;
+    }
+
+    public double getHeight() {
+        return height;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+ 
+    public void addPhoto(Photo photo) {
+        if (photoCount < photos.length) {
+            photos[photoCount++] = photo;
+        }
+    }
+
+    public void addDisease(Diseases disease) {
+        if (diseaseCount < diseases.length) {
+            diseases[diseaseCount++] = disease;
+        }
+    }
+
+    public void deletePhoto(Photo photo) {
+        for (int i = 0; i < photoCount; i++) {
+            if (photos[i] == photo) {
+                photos[i] = photos[photoCount - 1];
+                photos[photoCount - 1] = null;
+                photoCount--;
+                break;
+            }
+        }
+    }
+
+    public void deleteDisease(Diseases disease) {
+        for (int i = 0; i < diseaseCount; i++) {
+            if (diseases[i] == disease) {
+                diseases[i] = diseases[diseaseCount - 1];
+                diseases[diseaseCount - 1] = null;
+                diseaseCount--;
+                break;
+            }
+        }
+    }
+}
+
+class Diseases {
+    private String diseaseName;
+    private String diseaseDate;
+    private String diseaseTreatment;
+
+    public Diseases(String diseaseName, String diseaseDate, String diseaseTreatment) {
+        this.diseaseName = diseaseName;
+        this.diseaseDate = diseaseDate;
+        this.diseaseTreatment = diseaseTreatment;
+    }
+
+
+    public String getDiseaseName() {
+        return diseaseName;
+    }
+
+    public String getDiseaseDate() {
+        return diseaseDate;
+    }
+
+    public String getDiseaseTreatment() {
+        return diseaseTreatment;
+    }
+}
+
+class Photo {
+    private String photoName;
+    private String photoDate;
+    private String photoType;
+    private String doctorOpinion;
+
+    public Photo(String photoName, String photoDate, String photoType, String doctorOpinion) {
+        this.photoName = photoName;
+        this.photoDate = photoDate;
+        this.photoType = photoType;
+        this.doctorOpinion = doctorOpinion;
+    }
+
+
+    public String getPhotoName() {
+        return photoName;
+    }
+
+    public String getPhotoDate() {
+        return photoDate;
+    }
+
+    public String getPhotoType() {
+        return photoType;
+    }
+
+    public String getDoctorOpinion() {
+        return doctorOpinion;
+    }
+}
+
+class Hospital {
+    private Patient[] patients;
+    private int patientCount;
+
+    public Hospital(int maxPatients) {
+        patients = new Patient[maxPatients];
+        patientCount = 0;
+    }
+
+
+    public Patient searchPatientByCI(int ci) {
+        for (int i = 0; i < patientCount; i++) {
+            if (patients[i].getCI() == ci) {
+                return patients[i];
+            }
+        }
+        return null; 
+    }
+
+    public String[] findMajorPatientHeight() {
+        double maxHeight = 0;
+        String[] tallestPatients = new String[patients.length];
+        int index = 0;
+
+        for (int i = 0; i < patientCount; i++) {
+            if (patients[i].getHeight() > maxHeight) {
+                maxHeight = patients[i].getHeight();
+                index = 0;
+                tallestPatients[index++] = patients[i].getName();
+            } else if (patients[i].getHeight() == maxHeight) {
+                tallestPatients[index++] = patients[i].getName();
+            }
+        }
+
+        String[] result = new String[index];
+        System.arraycopy(tallestPatients, 0, result, 0, index);
+        return result;
+    }
+
+    public int countWomenWithDengue() {
+        int count = 0;
+        for (int i = 0; i < patientCount; i++) {
+            if (!patients[i].getSex()) {  // Si es mujer
+                for (int j = 0; j < patients[i].diseaseCount; j++) {
+                    if (patients[i].diseases[j].getDiseaseName().equalsIgnoreCase("Dengue")) {
+                        count++;
+                        break;
+                    }
+                }
+            }
+        }
+        return count;
+    }
+
+    public Patient[] sortPatientsByName() {
+        for (int i = 0; i < patientCount - 1; i++) {
+            for (int j = i + 1; j < patientCount; j++) {
+                if (patients[i].getName().compareTo(patients[j].getName()) > 0) {
+                    Patient temp = patients[i];
+                    patients[i] = patients[j];
+                    patients[j] = temp;
+                }
+            }
+        }
+        return patients;
+    }
+
+    public Patient[] sortPatientsByWeight() {
+        for (int i = 0; i < patientCount - 1; i++) {
+            for (int j = i + 1; j < patientCount; j++) {
+                if (patients[i].getWeight() > patients[j].getWeight()) {
+                    Patient temp = patients[i];
+                    patients[i] = patients[j];
+                    patients[j] = temp;
+                }
+            }
+        }
+        return patients;
+    }
+
+    public void addPatient(Patient patient) {
+        if (patientCount < patients.length) {
+            patients[patientCount++] = patient;
+        }
+    }
+
+    public void deletePatient(Patient patient) {
+        for (int i = 0; i < patientCount; i++) {
+            if (patients[i] == patient) {
+                patients[i] = patients[patientCount - 1];
+                patients[patientCount - 1] = null;
+                patientCount--;
+                break;
+            }
+        }
+    }
+}
